@@ -8,10 +8,10 @@ import Map, {
   FullscreenControl,
   GeolocateControl
 } from "react-map-gl";
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState } from "react";
 import Pin from "./Pin";
 
-const token = process.env.TOKEN;
+// const token = process.env.REACT_APP_MAPBOX_TOKEN;
 
 const colors = ["red", "blue", "yellow"];
 
@@ -20,26 +20,6 @@ const MapComponent = () => {
 
   const [popupInfo, setPopupInfo] = useState(null);
   const [data, setData] = useState(null);
-  const pins = useMemo(
-    () =>
-      data?.Points.map((val, index) => (
-        <Marker
-          key={`marker-${index}`}
-          longitude={val.Lon}
-          latitude={val.Lat}
-          anchor="bottom"
-          onClick={(e) => {
-            // If we let the click event propagates to the map, it will immediately close the popup
-            // with `closeOnClick: true`
-            e.originalEvent.stopPropagation();
-            setPopupInfo(val);
-          }}
-        >
-          <Pin />
-        </Marker>
-      )),
-    [data]
-  );
 
   const callApiData = async () => {
     const fetchData = new Promise((resolve, reject) => {
@@ -3262,6 +3242,21 @@ const MapComponent = () => {
       .catch((error) => {
         console.error("Error fetching JSON data:", error);
       });
+
+    // const instance = axios.create({
+    //     withCredentials: true,
+    //     baseURL: api_url,
+    // {auth: JSON.stringify({
+    //         username: "maptest",
+    //         password: "zdXfLkerHkt2Bxb"
+    //       })}
+    //  })
+    //   await instance
+    //     .get('/v1/mappoints')
+    //     .then((response) => {
+    //       console.log(response, "test");
+    //       if (newData) setData(newData);
+    //     }); // getting cross orgin error hence commented the code.
   };
 
   useEffect(() => {
@@ -3280,10 +3275,30 @@ const MapComponent = () => {
           bearing: 0,
           pitch: 0
         }}
-        mapboxAccessToken={token}
         mapStyle="mapbox://styles/mapbox/streets-v9"
+        // accessToken={token}
+        mapboxAccessToken="pk.eyJ1IjoiYWlzaHVyZWRkeTkiLCJhIjoiY2xsOXloNGh0MTR3ajNrdGprYnZlNDJteCJ9.u-cNsghm6-FizkXKdWbnCg"
       >
-        {pins}
+
+        {data?.Points.map(function (val, index) {
+          return (
+            <Marker
+              key={`marker-${index}`}
+              longitude={val.Lon}
+              latitude={val.Lat}
+              anchor="bottom"
+              onClick={(e) => {
+                // If we let the click event propagates to the map, it will immediately close the popup
+                // with `closeOnClick: true`
+                e.originalEvent.stopPropagation();
+                setPopupInfo(val);
+              }}
+            >
+              <Pin />
+            </Marker>
+          )
+        })
+        }
         {popupInfo && (
           <Popup
             anchor="top"
