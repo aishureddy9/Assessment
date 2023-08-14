@@ -3294,7 +3294,7 @@ const MapComponent = () => {
                 setPopupInfo(val);
               }}
             >
-              <Pin />
+              <Pin type = {val.Type} size = {20}/>
             </Marker>
           )
         })
